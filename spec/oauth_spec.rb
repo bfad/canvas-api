@@ -48,6 +48,35 @@ describe "OAuth" do
       res.should == {'access_token' => 'asdf'}
       @api.token.should == 'asdf'
     end
+
+    it "should successfully retrieve a refresh token" do
+      client_api
+      @api.should_receive(:post).and_return({'access_token' => 'asdf', 'refresh_token' => 'refresh'})
+      res = @api.retrieve_access_token("abc", "http://www.example.com")
+      res.should == {'access_token' => 'asdf', 'refresh_token' => 'refresh'}
+      @api.token.should == 'asdf'
+      @api.refresh_token.should == 'refresh'
+    end
+  end
+
+  context "refresh_access_token" do
+    it "should fail without a client_id and secret" do
+      token_api
+      expect { @api.refresh_access_token(nil) }.to raise_error(StandardError, 'client_id required for oauth flow')
+    end
+
+    it "should fail without a refresh token" do
+      client_api
+      expect { @api.refresh_access_token(nil) }.to raise_error(StandardError, 'refresh token required for oauth flow')
+    end
+
+    it "should successfully retrieve an access token" do
+      refresh_token_api
+      @api.should_receive(:post).and_return({'access_token' => 'asdf'})
+      res = @api.refresh_access_token("refresh token")
+      res.should == {'access_token' => 'asdf'}
+      @api.token.should == 'asdf'
+    end
   end
   
   context "logout" do

@@ -15,6 +15,10 @@ def client_api
   @api = Canvas::API.new(:host => "http://canvas.example.com", :client_id => rand(99999), :secret => rand(99999).to_s)
 end
 
+def refresh_token_api
+  @api = Canvas::API.new(:host => "http://canvas.example.com", :client_id => rand(99999), :secret => rand(99999).to_s, refresh_token: rand(99999).to_s)
+end
+
 def file_handle
   File.open(File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'canvas-api.rb')), 'r')
 end

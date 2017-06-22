@@ -21,6 +21,7 @@ module Canvas
   
     attr_accessor :host
     attr_accessor :token
+    attr_accessor :refresh_token
     attr_accessor :client_id
   
     def masquerade_as(user_id)
@@ -62,6 +63,19 @@ module Canvas
       raise "invalid callback_url" unless (URI.parse(callback_url) rescue nil)
       @token = "ignore"
       res = post("/login/oauth2/token", :client_id => @client_id, :redirect_uri => callback_url, :client_secret => @secret, :code => code)
+      if res['access_token']
+        @token = res['access_token']
+        @refresh_token = res['refresh_token']
+      end
+      res
+    end
+
+    def refresh_access_token(refresh_token)
+      raise "client_id required for oauth flow" unless @client_id
+      raise "secret required for oauth flow" unless @secret
+      raise "refresh token required for oauth flow" unless refresh_token
+      @token = "ignore"
+      res = post("/login/oauth2/token", :client_id => @client_id, :client_secret => @secret, :refresh_token => refresh_token, :grant_type => "refresh_token")
       if res['access_token']
         @token = res['access_token']
       end
