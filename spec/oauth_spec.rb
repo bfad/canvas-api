@@ -24,27 +24,27 @@ describe "OAuth" do
     end
   end
   
-  context "retrieve_access_token" do
+  context "retrieve_access_and_refresh_tokens" do
     it "should fail without a client_id and secret" do
       token_api
-      expect { @api.retrieve_access_token(nil, nil) }.to raise_error(StandardError, 'client_id required for oauth flow')
+      expect { @api.retrieve_access_and_refresh_tokens(nil, nil) }.to raise_error(StandardError, 'client_id required for oauth flow')
     end
     
     it "should fail without a code" do
       client_api
-      expect { @api.retrieve_access_token(nil, nil) }.to raise_error(StandardError, 'code required')
+      expect { @api.retrieve_access_and_refresh_tokens(nil, nil) }.to raise_error(StandardError, 'code required')
     end
     
     it "should fail on an invalid callback_url" do
       client_api
-      expect { @api.retrieve_access_token("abc", nil) }.to raise_error(StandardError, 'callback_url required')
-      expect { @api.retrieve_access_token("abc", "(*&^%$#") }.to raise_error(StandardError, 'invalid callback_url')
+      expect { @api.retrieve_access_and_refresh_tokens("abc", nil) }.to raise_error(StandardError, 'callback_url required')
+      expect { @api.retrieve_access_and_refresh_tokens("abc", "(*&^%$#") }.to raise_error(StandardError, 'invalid callback_url')
     end
     
     it "should successfully retrieve an access token" do
       client_api
       @api.should_receive(:post).and_return({'access_token' => 'asdf'})
-      res = @api.retrieve_access_token("abc", "http://www.example.com")
+      res = @api.retrieve_access_and_refresh_tokens("abc", "http://www.example.com")
       res.should == {'access_token' => 'asdf'}
       @api.token.should == 'asdf'
     end
@@ -52,7 +52,7 @@ describe "OAuth" do
     it "should successfully retrieve a refresh token" do
       client_api
       @api.should_receive(:post).and_return({'access_token' => 'asdf', 'refresh_token' => 'refresh'})
-      res = @api.retrieve_access_token("abc", "http://www.example.com")
+      res = @api.retrieve_access_and_refresh_tokens("abc", "http://www.example.com")
       res.should == {'access_token' => 'asdf', 'refresh_token' => 'refresh'}
       @api.token.should == 'asdf'
       @api.refresh_token.should == 'refresh'
@@ -98,14 +98,3 @@ describe "OAuth" do
     end
   end
 end
-
-#     def retrieve_access_token(code, callback_url)
-#       raise "client_id required for oauth flow" unless @client_id
-#       raise "secret required for oauth flow" unless @secret
-#       post("/login/oauth2/token", :client_id => @client_id, :redirect_uri => callback_url, :client_secret => @secret, :code => code)
-#     end
-#   
-#     def logout
-#       delete("/login/oauth2/token")
-#     end
-#   

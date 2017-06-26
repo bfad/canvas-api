@@ -33,7 +33,7 @@ And then when the browser redirects to oauth_success:
 ```ruby
 canvas = Canvas::API.new(:host => "https://canvas.example.com", :client_id => 123, :secret => "abcdef")
 code = params['code']
-canvas.retrieve_access_token(code, 'https://my.site/oauth_success') # this callback_url must match the one provided in the first step
+canvas.retrieve_access_and_refresh_tokens(code, 'https://my.site/oauth_success') # this callback_url must match the one provided in the first step
 # => {access_token: "qwert"}
 ```
 ### General API Calls

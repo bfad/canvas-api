@@ -55,7 +55,7 @@ module Canvas
       oauth_url(callback_url, "/auth/userinfo")
     end
   
-    def retrieve_access_token(code, callback_url)
+    def retrieve_access_and_refresh_tokens(code, callback_url)
       raise "client_id required for oauth flow" unless @client_id
       raise "secret required for oauth flow" unless @secret
       raise "code required" unless code
