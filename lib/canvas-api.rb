@@ -74,7 +74,11 @@ module Canvas
       raise "client_id required for oauth flow" unless @client_id
       raise "secret required for oauth flow" unless @secret
       raise "refresh token required for oauth flow" unless refresh_token
+      
+      # A value of "ignore" is used in the validate_call and generate_uri
+      # method below. 
       @token = "ignore"
+      
       res = post("/login/oauth2/token", :client_id => @client_id, :client_secret => @secret, :refresh_token => refresh_token, :grant_type => "refresh_token")
       if res['access_token']
         @token = res['access_token']
